@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS contact (
     country_code VARCHAR(10) NOT NULL,
     mobile VARCHAR(20) NOT NULL,
     email VARCHAR(255) UNIQUE,
-    address TEXT,
+    address VARCHAR(1000),
     tag VARCHAR(100),
     created_by VARCHAR(255) DEFAULT NULL,
     modified_by VARCHAR(255) DEFAULT NULL,
