@@ -18,4 +18,7 @@ public class MessageKeyConstants {
     public static final String CONTACT_ALREADY_EXIST = "contact.already.exist";
     public static final String TAG_NOT_FOUND = "tag.not.found";
     public static final String GROUP_NOT_FOUND = "group.not.found";
+    public static final String MOBILE_ALREADY_EXISTS = "mobile.already.exist";
+    public static final String EMAIL_ALREADY_EXISTS = "email.already.exist";
+    public static final String CONTACT_ADDED_SUCCESS = "contact.added.success";
 }

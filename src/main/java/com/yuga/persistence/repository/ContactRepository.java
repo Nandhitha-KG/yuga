@@ -11,5 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface ContactRepository extends R2dbcRepository<ContactEntity, UUID> {
-    Mono<ContactEntity> findByMobileAndEmail(String mobile, String email);
+    Mono<ContactEntity> findByMobile(String mobile);
+    Mono<ContactEntity> findByEmail(String email);
 }

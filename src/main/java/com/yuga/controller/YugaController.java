@@ -112,7 +112,7 @@ public class YugaController {
     @PostMapping("/contact")
     public Mono<ResponseEntity<ApiResponse>> addContact(@RequestBody GroupRequest groupRequest) {
         return yugaService.addContact(groupRequest).flatMap(response -> {
-            ApiResponse apiResponse = CommonUtils.buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource,
+            ApiResponse apiResponse = CommonUtils.buildSuccessResponse(MessageKeyConstants.CONTACT_ADDED_SUCCESS, messageSource,
                     HttpStatus.OK, response);
             return Mono.just(ResponseEntity.status(HttpStatus.OK).body(apiResponse));
         });

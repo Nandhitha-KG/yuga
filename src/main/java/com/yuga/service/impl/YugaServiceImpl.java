@@ -172,41 +172,54 @@ public class YugaServiceImpl implements YugaService{
     @Override
     public Mono<ApiResponse> addContact(GroupRequest groupRequest) {
         Contact contactDto = groupRequest.getContact();
-        return tagsRepository.findByTagName(contactDto.getTag())
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MessageKeyConstants.TAG_NOT_FOUND)))
-                .flatMap(tagEntity -> {
 
-                    return contactRepository.findByMobileAndEmail(contactDto.getMobile(), contactDto.getEmail())
-                            .flatMap(existingContact -> Mono.error(new BadRequestException(MessageKeyConstants.CONTACT_ALREADY_EXIST)))
-                            .switchIfEmpty(Mono.just(contactDto))
-                            .flatMap(contact ->
-                                    Flux.fromIterable(contactDto.getGroupContacts())
-                                            .flatMap(gcDto -> groupRepository.findById(gcDto.getGroupId())
-                                                    .map(groupEntity -> {
-                                                        gcDto.setGroupName(groupEntity.getGroupName());
-                                                        return gcDto;
-                                                    })
-                                                    .switchIfEmpty(Mono.error(new ResourceNotFoundException(MessageKeyConstants.GROUP_NOT_FOUND)))
-                                            )
-                                            .collectList()
-                                            .flatMap(groupContacts -> {
-                                                ContactEntity contactEntity = yugaMapper.mapToContactEntity(contactDto);
-                                                return contactRepository.save(contactEntity)
-                                                        .flatMap(savedContact -> {
-                                                            var groupContactsEntities = groupContacts.stream()
-                                                                    .map(gcDto -> {
-                                                                        GroupContactsEntity gcEntity = new GroupContactsEntity();
-                                                                        gcEntity.setContactId(savedContact.getUuid());
-                                                                        gcEntity.setGroupId(gcDto.getGroupId());
-                                                                        gcEntity.setGroupName(gcDto.getGroupName());
-                                                                        return gcEntity;
-                                                                    }).toList();
-                                                            return groupContactsRepository.saveAll(groupContactsEntities)
-                                                                    .collectList()
-                                                                    .map(savedGroupContacts -> new ApiResponse());
-                                                        });
-                                            })
-                            );
+        // Validate if mobile and email already exist in the repository
+        Mono<Boolean> mobileExists = contactRepository.findByMobile(contactDto.getMobile())
+                .hasElement();
+        Mono<Boolean> emailExists = contactRepository.findByEmail(contactDto.getEmail())
+                .hasElement();
+
+        return Mono.zip(mobileExists, emailExists)
+                .flatMap(result -> {
+                    boolean mobileExistsInRepo = result.getT1();
+                    boolean emailExistsInRepo = result.getT2();
+
+                    if (mobileExistsInRepo) {
+                        return Mono.error(new ResourceNotFoundException(MessageKeyConstants.MOBILE_ALREADY_EXISTS));
+                    }
+                    if (emailExistsInRepo) {
+                        return Mono.error(new ResourceNotFoundException(MessageKeyConstants.EMAIL_ALREADY_EXISTS));
+                    }
+                    return tagsRepository.findByTagName(contactDto.getTag())
+                            .switchIfEmpty(Mono.error(new ResourceNotFoundException(MessageKeyConstants.TAG_NOT_FOUND)))
+                            .flatMap(tagEntity -> {
+                                return Flux.fromIterable(contactDto.getGroupContacts())
+                                        .flatMap(gcDto -> groupRepository.findById(gcDto.getGroupId())
+                                                .map(groupEntity -> {
+                                                    gcDto.setGroupName(groupEntity.getGroupName());
+                                                    return gcDto;
+                                                })
+                                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MessageKeyConstants.GROUP_NOT_FOUND)))
+                                        )
+                                        .collectList()
+                                        .flatMap(groupContacts -> {
+                                            ContactEntity contactEntity = yugaMapper.mapToContactEntity(contactDto);
+                                            return contactRepository.save(contactEntity)
+                                                    .flatMap(savedContact -> {
+                                                        var groupContactsEntities = groupContacts.stream()
+                                                                .map(gcDto -> {
+                                                                    GroupContactsEntity gcEntity = new GroupContactsEntity();
+                                                                    gcEntity.setContactId(savedContact.getUuid());
+                                                                    gcEntity.setGroupId(gcDto.getGroupId());
+                                                                    gcEntity.setGroupName(gcDto.getGroupName());
+                                                                    return gcEntity;
+                                                                }).toList();
+                                                        return groupContactsRepository.saveAll(groupContactsEntities)
+                                                                .collectList()
+                                                                .map(savedGroupContacts -> new ApiResponse());
+                                                    });
+                                        });
+                            });
                 });
     }
 }
