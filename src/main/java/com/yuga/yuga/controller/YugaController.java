@@ -91,4 +91,12 @@ public class YugaController {
         });
     }
 
+    @PutMapping("/group")
+    public Mono<ResponseEntity<ApiResponse>> updateGroup(@RequestBody GroupRequest groupRequest) {
+        return yugaService.updateGroup(groupRequest).flatMap(response -> {
+            ApiResponse response1 = CommonUtils.buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource,
+                    HttpStatus.OK, response);
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).body(response1));
+        });
+    }
 }

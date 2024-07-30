@@ -12,4 +12,6 @@ public class MessageKeyConstants {
     public static final String INTERNAL_SERVER_ERROR = "internal.server.error";
     public static final String SUCCESS = "success";
     public static final String GROUP_DELETED_SUCCESS = "group.deleted.success";
+    public static final String FAILED_TO_UPDATE = "failed.to.update";
+    public static final String GROUP_ALREADY_EXISt="group.already.exist";
 }

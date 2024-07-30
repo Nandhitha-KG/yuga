@@ -24,4 +24,6 @@ public interface YugaService {
     Mono<ApiResponse> deleteGroup(UUID groupId);
 
     Mono<Response> listOfGroup(GroupRequest groupRequest);
+
+    Mono<ApiResponse> updateGroup(GroupRequest groupRequest);
 }

@@ -10,6 +10,7 @@ import com.yuga.yuga.persistence.repository.TagsRepository;
 import com.yuga.yuga.service.YugaService;
 import com.yuga.yuga.service.dto.Tags;
 
+import com.yuga.yuga.exception.BadRequestException;
 import com.yuga.yuga.payload.request.GroupRequest;
 import com.yuga.yuga.payload.response.ApiResponse;
 import com.yuga.yuga.payload.response.PageDetails;
@@ -19,6 +20,7 @@ import com.yuga.yuga.persistence.repository.CountriesRepository;
 import com.yuga.yuga.persistence.repository.GroupRepository;
 import com.yuga.yuga.service.YugaService;
 import com.yuga.yuga.service.dto.Group;
+import com.yuga.yuga.util.MessageKeyConstants;
 import com.yuga.yuga.utils.mapper.YugaMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -90,8 +92,10 @@ public class YugaServiceImpl implements YugaService{
     public Mono<ApiResponse> createGroup(GroupRequest groupRequest) {
         GroupEntity groupEntity = yugaMapper.mapToGroupEntity(groupRequest.getGroup());
         groupEntity.setActive(true);
-        return groupRepository.save(groupEntity)
-                .map(savedGroup -> new ApiResponse());
+        return groupRepository.findByGroupName(groupRequest.getGroup().getGroupName())
+                .flatMap(existingGroup -> Mono.error(new BadRequestException(MessageKeyConstants.GROUP_ALREADY_EXISt)))
+                .switchIfEmpty(groupRepository.save(groupEntity))
+                .map(groupEntity1->new ApiResponse());
     }
 
     public Mono<ApiResponse> deleteGroup(UUID groupId) {
@@ -134,6 +138,16 @@ public class YugaServiceImpl implements YugaService{
                     ApiResponse apiResponse = new ApiResponse();
                     return apiResponse;
                 });
+    }
+
+    public Mono<ApiResponse> updateGroup(GroupRequest GroupRequest) {
+        return groupRepository.updateGroup(
+                        GroupRequest.getGroup().getUuid(),
+                        GroupRequest.getGroup().getGroupName(),
+                        GroupRequest.getGroup().getDescription()
+                )
+                .then(Mono.just(new ApiResponse()))
+                .onErrorResume(e -> Mono.error(new BadRequestException(MessageKeyConstants.FAILED_TO_UPDATE)));
     }
 
 }

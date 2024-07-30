@@ -22,4 +22,10 @@ public interface GroupRepository extends R2dbcRepository<GroupEntity, UUID> {
 
     @Query("SELECT COUNT(*) FROM groups WHERE is_active = true")
     Mono<Long> countActiveGroups();
+
+    @Query("UPDATE groups SET group_name = :groupName, description = :description WHERE uuid = :uuid")
+    Mono<Void> updateGroup(UUID uuid, String groupName, String description);
+
+    @Query("SELECT * FROM groups WHERE group_name = :groupName")
+    Mono<GroupEntity> findByGroupName(String groupName);
 }
