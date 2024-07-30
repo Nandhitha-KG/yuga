@@ -1,8 +1,10 @@
 package com.yuga.yuga.controller;
 
 import com.yuga.yuga.payload.request.GroupRequest;
+import com.yuga.yuga.payload.request.TagsRequest;
 import com.yuga.yuga.payload.response.ApiResponse;
 import com.yuga.yuga.payload.response.Response;
+import com.yuga.yuga.payload.response.TagsResponse;
 import com.yuga.yuga.service.YugaService;
 import com.yuga.yuga.util.CommonUtils;
 import com.yuga.yuga.util.MessageKeyConstants;
@@ -35,12 +37,38 @@ public class YugaController {
             return Mono.just(ResponseEntity.status(HttpStatus.OK).body(response1));
         });
     }
+    @PostMapping("/tags")
+    public Mono<ResponseEntity<ApiResponse>> addTags(@RequestBody TagsRequest tagsRequest) {
+        return yugaService.addTags(tagsRequest).flatMap(response -> {
+            ApiResponse apiResponse = CommonUtils.buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource,
+                    HttpStatus.OK, response);
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).body(apiResponse));
+        });
+    }
 
     @PostMapping("/group")
     public Mono<ResponseEntity<ApiResponse>> createGroup(@RequestBody GroupRequest groupRequest) {
         return yugaService.createGroup(groupRequest).flatMap(response -> {
             ApiResponse apiResponse = CommonUtils.buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource,
                     HttpStatus.OK, response);
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).body(apiResponse));
+        });
+    }
+
+    @GetMapping("/tagsList")
+    public Mono<ResponseEntity<TagsResponse>> getTagsList() {
+        return yugaService.getTagsList().flatMap(response -> {
+            TagsResponse tagsResponse = CommonUtils
+                    .buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource, HttpStatus.OK, response);
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).body(tagsResponse));
+        });
+    }
+
+    @PutMapping("/tags/select/{uuid}")
+    public Mono<ResponseEntity<ApiResponse>> selectTag(@PathVariable UUID uuid) {
+        return yugaService.selectTag(uuid).flatMap(response -> {
+            ApiResponse apiResponse = CommonUtils
+                    .buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource, HttpStatus.OK, response);
             return Mono.just(ResponseEntity.status(HttpStatus.OK).body(apiResponse));
         });
     }
@@ -62,4 +90,5 @@ public class YugaController {
             return Mono.just(ResponseEntity.status(HttpStatus.OK).body(response1));
         });
     }
+
 }
