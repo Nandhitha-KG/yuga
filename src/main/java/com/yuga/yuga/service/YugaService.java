@@ -26,4 +26,6 @@ public interface YugaService {
     Mono<Response> listOfGroup(GroupRequest groupRequest);
 
     Mono<ApiResponse> updateGroup(GroupRequest groupRequest);
+
+    Mono<ApiResponse> selectGroup(GroupRequest groupRequest);
 }

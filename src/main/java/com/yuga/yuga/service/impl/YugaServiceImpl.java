@@ -24,6 +24,7 @@ import com.yuga.yuga.util.MessageKeyConstants;
 import com.yuga.yuga.utils.mapper.YugaMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -150,4 +151,17 @@ public class YugaServiceImpl implements YugaService{
                 .onErrorResume(e -> Mono.error(new BadRequestException(MessageKeyConstants.FAILED_TO_UPDATE)));
     }
 
+    @Override
+    public Mono<ApiResponse> selectGroup(GroupRequest groupRequest) {
+        List<Group> groups = groupRequest.getGroupList();
+        return Flux.fromIterable(groups)
+                .flatMap(group -> groupRepository.findById(group.getUuid())
+                        .flatMap(groupEntity -> {
+                            groupEntity.setContactSelected(true);
+                            return groupRepository.save(groupEntity);
+                        })
+                        .onErrorResume(e -> Mono.empty()))
+                .then(Mono.just(new ApiResponse()))
+                .onErrorResume(e -> Mono.error(new BadRequestException(MessageKeyConstants.FAILED_TO_UPDATE)));
+    }
 }
