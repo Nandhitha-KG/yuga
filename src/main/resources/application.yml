@@ -1,0 +1,41 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: yuga
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/yuga
+    username: postgres
+    password: root
+    sql:
+      init:
+        mode: always
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      temp:
+        use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: create
+      show-sql: false
+      database: postgres
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      open-in-view: false
+      generate-ddl: false
+      properties.hibernate.temp.use_jdbc_metadata_defaults: false
+      id:
+        new_generator_mappings: false
+  sql:
+    init:
+      mode: never
+
+yuga:
+  dbconfig: update
+  jobs:
+    enabled: false
