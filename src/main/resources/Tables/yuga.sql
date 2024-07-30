@@ -205,3 +205,13 @@ INSERT INTO countries (country_name, prefix, code) VALUES
 ('Yemen', '+967', 'YE'),
 ('Zambia', '+260', 'ZM'),
 ('Zimbabwe', '+263', 'ZW');
+
+CREATE TABLE IF NOT EXISTS tags (
+    uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tag_name VARCHAR(100) NOT NULL,
+    is_selected BOOLEAN,
+    created_by VARCHAR(255) DEFAULT NULL,
+    modified_by VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
