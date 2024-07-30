@@ -36,6 +36,6 @@ spring:
       mode: never
 
 yuga:
-  dbconfig: update
+  dbconfig: create
   jobs:
     enabled: false
