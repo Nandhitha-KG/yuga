@@ -10,4 +10,5 @@ public class MessageKeyConstants {
     public static final String ERROR_CODE_404 = "error.code.404";
     public static final String ERROR_CODE_500 = "error.code.500";
     public static final String INTERNAL_SERVER_ERROR = "internal.server.error";
+    public static final String SUCCESS = "success";
 }
