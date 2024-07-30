@@ -1,7 +1,9 @@
 package com.yuga.yuga.service;
 
+import com.yuga.yuga.payload.request.ContactRequest;
 import com.yuga.yuga.payload.request.TagsRequest;
 import com.yuga.yuga.payload.response.ApiResponse;
+import com.yuga.yuga.payload.response.ContactResponse;
 import com.yuga.yuga.payload.response.Response;
 import com.yuga.yuga.payload.response.TagsResponse;
 import com.yuga.yuga.payload.request.GroupRequest;
@@ -26,4 +28,8 @@ public interface YugaService {
     Mono<Response> listOfGroup(GroupRequest groupRequest);
 
     Mono<ApiResponse> updateGroup(GroupRequest groupRequest);
+
+    Mono<ContactResponse> getContactDetails(UUID contactId);
+
+    Mono<ContactResponse> updateContact(UUID contactId, ContactRequest contactUpdateRequest);
 }

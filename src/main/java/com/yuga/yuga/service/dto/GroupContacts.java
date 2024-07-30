@@ -11,5 +11,5 @@ public class GroupContacts {
     private UUID uuid;
     private UUID contactId;
     private UUID groupId;
-    private UUID groupName;
+    private String groupName;
 }

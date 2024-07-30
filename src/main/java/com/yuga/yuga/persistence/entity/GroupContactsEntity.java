@@ -16,7 +16,7 @@ public class GroupContactsEntity {
     private UUID uuid;
     private UUID contactId;
     private UUID groupId;
-    private UUID groupName;
+    private String groupName;
     @CreatedBy
     private String createdBy;
 

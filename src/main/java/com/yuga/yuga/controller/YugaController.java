@@ -1,8 +1,10 @@
 package com.yuga.yuga.controller;
 
+import com.yuga.yuga.payload.request.ContactRequest;
 import com.yuga.yuga.payload.request.GroupRequest;
 import com.yuga.yuga.payload.request.TagsRequest;
 import com.yuga.yuga.payload.response.ApiResponse;
+import com.yuga.yuga.payload.response.ContactResponse;
 import com.yuga.yuga.payload.response.Response;
 import com.yuga.yuga.payload.response.TagsResponse;
 import com.yuga.yuga.service.YugaService;
@@ -97,6 +99,24 @@ public class YugaController {
             ApiResponse response1 = CommonUtils.buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource,
                     HttpStatus.OK, response);
             return Mono.just(ResponseEntity.status(HttpStatus.OK).body(response1));
+        });
+    }
+
+    @GetMapping("/contactDetails/{contactId}")
+    public Mono<ResponseEntity<ContactResponse>> getContactDetails(@PathVariable UUID contactId) {
+        return yugaService.getContactDetails(contactId).flatMap(response -> {
+            ContactResponse contactResponse = CommonUtils
+                    .buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource, HttpStatus.OK, response);
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).body(contactResponse));
+        });
+    }
+
+    @PutMapping("/contactUpdate/{contactId}")
+    public Mono<ResponseEntity<ContactResponse>> updateContact(@PathVariable UUID contactId, @RequestBody ContactRequest contactRequest) {
+        return yugaService.updateContact(contactId, contactRequest).flatMap(response -> {
+            ContactResponse contactResponse = CommonUtils
+                    .buildSuccessResponse(MessageKeyConstants.SUCCESS, messageSource, HttpStatus.OK, response);
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).body(contactResponse));
         });
     }
 }
