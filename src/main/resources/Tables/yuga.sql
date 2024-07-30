@@ -205,3 +205,18 @@ INSERT INTO countries (country_name, prefix, code) VALUES
 ('Yemen', '+967', 'YE'),
 ('Zambia', '+260', 'ZM'),
 ('Zimbabwe', '+263', 'ZW');
+
+CREATE TABLE IF NOT EXISTS groups (
+    uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    group_name VARCHAR(255) NOT NULL,
+    description VARCHAR(255)    ,
+    no_of_contact INT NOT NULL DEFAULT 0,
+    last_contacted TIMESTAMP DEFAULT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_contact_selected BOOLEAN NOT NULL DEFAULT FALSE,
+    is_group_selected BOOLEAN NOT NULL DEFAULT FALSE,
+    created_by VARCHAR(255) DEFAULT NULL,
+    modified_by VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
