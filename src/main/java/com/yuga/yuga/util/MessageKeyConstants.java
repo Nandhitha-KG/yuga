@@ -11,4 +11,5 @@ public class MessageKeyConstants {
     public static final String ERROR_CODE_500 = "error.code.500";
     public static final String INTERNAL_SERVER_ERROR = "internal.server.error";
     public static final String SUCCESS = "success";
+    public static final String GROUP_DELETED_SUCCESS = "group.deleted.success";
 }
