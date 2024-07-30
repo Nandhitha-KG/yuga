@@ -231,3 +231,29 @@ CREATE TABLE IF NOT EXISTS groups (
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS contact (
+    uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    country_code VARCHAR(10) NOT NULL,
+    mobile VARCHAR(20) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    address TEXT,
+    tag VARCHAR(100),
+    created_by VARCHAR(255) DEFAULT NULL,
+    modified_by VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS group_contacts (
+    uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    contact_id UUID,
+    group_id UUID,
+    group_name UUID,
+    created_by VARCHAR(255),
+    modified_by VARCHAR(255),
+    created_by VARCHAR(255) DEFAULT NULL,
+    modified_by VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
