@@ -268,23 +268,6 @@ public class YugaServiceImpl implements YugaService{
                     }
 
                     return contactRepository.save(existingContact)
-                            .flatMap(updatedContact -> {
-                                if (contactRequest.getGroupContacts() != null) {
-                                    return groupContactsRepository.deleteByContactId(contactId)
-                                            .thenMany(Flux.fromIterable(contactRequest.getGroupContacts())
-                                                    .map(groupContactsRequest -> {
-                                                        GroupContactsEntity groupContactsEntity = new GroupContactsEntity();
-                                                        groupContactsEntity.setContactId(updatedContact.getUuid());
-                                                        groupContactsEntity.setGroupId(groupContactsRequest.getGroupId());
-                                                        groupContactsEntity.setGroupName(groupContactsRequest.getGroupName());
-                                                        return groupContactsEntity;
-                                                    })
-                                                    .flatMap(groupContactsRepository::save))
-                                            .then(Mono.just(updatedContact));
-                                } else {
-                                    return Mono.just(updatedContact);
-                                }
-                            })
                             .flatMap(updatedContact -> groupContactsRepository.findByContactId(updatedContact.getUuid())
                                     .collectList()
                                     .map(groupContactsEntities -> {
@@ -299,5 +282,6 @@ public class YugaServiceImpl implements YugaService{
                                     }));
                 });
     }
+
 
 }

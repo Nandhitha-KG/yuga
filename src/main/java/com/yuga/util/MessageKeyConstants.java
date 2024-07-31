@@ -14,9 +14,7 @@ public class MessageKeyConstants {
     public static final String GROUP_DELETED_SUCCESS = "group.deleted.success";
     public static final String FAILED_TO_UPDATE = "failed.to.update";
     public static final String GROUP_ALREADY_EXISt="group.already.exist";
-<<<<<<< HEAD:src/main/java/com/yuga/yuga/util/MessageKeyConstants.java
     public static final String NO_DATA_FOUND = "no.data.found";
-=======
     public static final String FAILED_TO_ADD_CONTACT = "failed.to.add.contact";
     public static final String CONTACT_ALREADY_EXIST = "contact.already.exist";
     public static final String TAG_NOT_FOUND = "tag.not.found";
@@ -24,5 +22,4 @@ public class MessageKeyConstants {
     public static final String MOBILE_ALREADY_EXISTS = "mobile.already.exist";
     public static final String EMAIL_ALREADY_EXISTS = "email.already.exist";
     public static final String CONTACT_ADDED_SUCCESS = "contact.added.success";
->>>>>>> 3ab4bf716fc1b2ff437b9def59bd1be40523acf4:src/main/java/com/yuga/util/MessageKeyConstants.java
 }

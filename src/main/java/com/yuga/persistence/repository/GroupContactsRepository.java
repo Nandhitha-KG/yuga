@@ -12,5 +12,4 @@ import java.util.UUID;
 public interface GroupContactsRepository extends R2dbcRepository<GroupContactsEntity, UUID> {
     Flux<GroupContactsEntity> findByContactId(UUID uuid);
 
-    Mono<Void> deleteByContactId(UUID contactId);
 }
