@@ -172,8 +172,6 @@ public class YugaServiceImpl implements YugaService{
     @Override
     public Mono<ApiResponse> addContact(GroupRequest groupRequest) {
         Contact contactDto = groupRequest.getContact();
-
-        // Validate if mobile and email already exist in the repository
         Mono<Boolean> mobileExists = contactRepository.findByMobile(contactDto.getMobile())
                 .hasElement();
         Mono<Boolean> emailExists = contactRepository.findByEmail(contactDto.getEmail())
@@ -216,7 +214,27 @@ public class YugaServiceImpl implements YugaService{
                                                                 }).toList();
                                                         return groupContactsRepository.saveAll(groupContactsEntities)
                                                                 .collectList()
-                                                                .map(savedGroupContacts -> new ApiResponse());
+                                                                .flatMap(savedGroupContacts -> {
+                                                                    return Flux.fromIterable(groupContacts)
+                                                                            .flatMap(gcDto -> groupRepository.findById(gcDto.getGroupId())
+                                                                                    .flatMap(groupEntity -> {
+                                                                                        groupEntity.setNoOfContact(groupEntity.getNoOfContact() + 1);
+                                                                                        return groupRepository.save(groupEntity);
+                                                                                    })
+                                                                            )
+                                                                            .then(Mono.zip(
+                                                                                    tagsRepository.findAll().map(tag -> {
+                                                                                        tag.setSelected(false);
+                                                                                        return tag;
+                                                                                    }).flatMap(tagsRepository::save).collectList(),
+                                                                                    groupRepository.findAll()
+                                                                                            .map(group -> {
+                                                                                                group.setContactSelected(false);
+                                                                                                return group;
+                                                                                            }).flatMap(groupRepository::save).collectList()
+                                                                            ))
+                                                                            .then(Mono.just(new ApiResponse()));
+                                                                });
                                                     });
                                         });
                             });
@@ -282,6 +300,5 @@ public class YugaServiceImpl implements YugaService{
                                     }));
                 });
     }
-
 
 }
