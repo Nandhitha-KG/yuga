@@ -2,21 +2,20 @@ package com.yuga.service.impl;
 
 import com.yuga.exception.BadRequestException;
 import com.yuga.exception.ResourceNotFoundException;
+import com.yuga.payload.request.ContactRequest;
 import com.yuga.payload.request.TagsRequest;
-import com.yuga.payload.response.TagsResponse;
+import com.yuga.payload.response.*;
 import com.yuga.persistence.entity.ContactEntity;
 import com.yuga.persistence.entity.GroupContactsEntity;
 import com.yuga.persistence.entity.GroupEntity;
 import com.yuga.persistence.entity.TagsEntity;
 import com.yuga.persistence.repository.*;
 import com.yuga.service.dto.Contact;
+import com.yuga.service.dto.GroupContacts;
 import com.yuga.service.dto.Tags;
-import com.yuga.payload.response.ApiResponse;
-import com.yuga.payload.response.Response;
 import com.yuga.service.YugaService;
 
 import com.yuga.payload.request.GroupRequest;
-import com.yuga.payload.response.PageDetails;
 import com.yuga.service.dto.Group;
 import com.yuga.util.MessageKeyConstants;
 import com.yuga.utils.mapper.YugaMapper;
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -238,6 +238,66 @@ public class YugaServiceImpl implements YugaService{
                                                     });
                                         });
                             });
+                });
+    }
+
+    @Override
+    public Mono<ContactResponse> getContactDetails(UUID contactId) {
+        return contactRepository.findById(contactId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MessageKeyConstants.NO_DATA_FOUND)))
+                .flatMap(contactEntity ->
+                        groupContactsRepository.findByContactId(contactEntity.getUuid())
+                                .collectList()
+                                .map(groupContactsEntities -> {
+                                    Contact contact = yugaMapper.mapToContact(contactEntity);
+                                    List<GroupContacts> groupContacts = groupContactsEntities.stream()
+                                            .map(yugaMapper::mapToGroupContacts)
+                                            .collect(Collectors.toList());
+                                    contact.setGroupContacts(groupContacts);
+                                    ContactResponse contactResponse = new ContactResponse();
+                                    contactResponse.setContactList(Collections.singletonList(contact));
+                                    return contactResponse;
+                                })
+                );
+    }
+
+    @Override
+    public Mono<ContactResponse> updateContact(UUID contactId, ContactRequest contactRequest) {
+        return contactRepository.findById(contactId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MessageKeyConstants.NO_DATA_FOUND)))
+                .flatMap(existingContact -> {
+                    if (contactRequest.getName() != null) {
+                        existingContact.setName(contactRequest.getName());
+                    }
+                    if (contactRequest.getCountryCode() != null) {
+                        existingContact.setCountryCode(contactRequest.getCountryCode());
+                    }
+                    if (contactRequest.getMobile() != null) {
+                        existingContact.setMobile(contactRequest.getMobile());
+                    }
+                    if (contactRequest.getEmail() != null) {
+                        existingContact.setEmail(contactRequest.getEmail());
+                    }
+                    if (contactRequest.getAddress() != null) {
+                        existingContact.setAddress(contactRequest.getAddress());
+                    }
+                    if (contactRequest.getTag() != null) {
+                        existingContact.setTag(contactRequest.getTag());
+                    }
+
+                    return contactRepository.save(existingContact)
+                            .flatMap(updatedContact -> groupContactsRepository.findByContactId(updatedContact.getUuid())
+                                    .collectList()
+                                    .map(groupContactsEntities -> {
+                                        Contact contact = yugaMapper.mapToContact(updatedContact);
+                                        List<GroupContacts> groupContacts = groupContactsEntities.stream()
+                                                .map(yugaMapper::mapToGroupContacts)
+                                                .collect(Collectors.toList());
+                                        contact.setGroupContacts(groupContacts);
+                                        ContactResponse contactResponse = new ContactResponse();
+                                        contactResponse.setContactList(Collections.singletonList(contact));
+                                        return contactResponse;
+                                    }));
                 });
     }
 

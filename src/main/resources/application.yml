@@ -6,7 +6,7 @@ spring:
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/yuga
     username: postgres
-    password: postgres
+    password: root
     sql:
       init:
         mode: always

@@ -14,6 +14,7 @@ public class MessageKeyConstants {
     public static final String GROUP_DELETED_SUCCESS = "group.deleted.success";
     public static final String FAILED_TO_UPDATE = "failed.to.update";
     public static final String GROUP_ALREADY_EXISt="group.already.exist";
+    public static final String NO_DATA_FOUND = "no.data.found";
     public static final String FAILED_TO_ADD_CONTACT = "failed.to.add.contact";
     public static final String CONTACT_ALREADY_EXIST = "contact.already.exist";
     public static final String TAG_NOT_FOUND = "tag.not.found";
